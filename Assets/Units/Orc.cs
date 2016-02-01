@@ -11,9 +11,9 @@ public class Orc : MonoBehaviour {
 
         orc = new Unit(this.gameObject, "Orc");
 
-        orc.hp = 20;
-        orc.speed = 15;
-        orc.atk = 1;
+        orc.hp = 5;
+        orc.speed = 30;
+        orc.atk = 5;
         orc.team = 1;
         UnitHandler.addToUnitList(orc);
     }

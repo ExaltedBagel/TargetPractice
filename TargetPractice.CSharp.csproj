@@ -76,9 +76,12 @@
     <Compile Include="Assets\Movement.cs" />
     <Compile Include="Assets\TargetCircle.cs" />
     <Compile Include="Assets\Targetted.cs" />
+    <Compile Include="Assets\TurnHandler.cs" />
     <Compile Include="Assets\Unit.cs" />
+    <Compile Include="Assets\UnitAttackHandler.cs" />
     <Compile Include="Assets\UnitHandler.cs" />
     <Compile Include="Assets\UnitListUI.cs" />
+    <Compile Include="Assets\UnitMoveHandler.cs" />
     <Compile Include="Assets\UnitWindow.cs" />
     <Compile Include="Assets\Units\Orc.cs" />
     <Compile Include="Assets\Units\playerSpawn.cs" />

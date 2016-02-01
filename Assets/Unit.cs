@@ -208,7 +208,7 @@ public class Unit : Component, IEquatable<Unit>
             }           
         }
         //
-        UnitHandler.renderPath(allWayPoints);
+        UnitMoveHandler.renderPath(allWayPoints);
 
         return pathLength;
     }
@@ -265,22 +265,79 @@ public class Unit : Component, IEquatable<Unit>
                     allWayPoints = newPath;
                 }
             }
+           
 
-            return allWayPoints[allWayPoints.Length - 1]; //returns the endpoint
+            return allWayPoints[allWayPoints.Length-1]; //Returns final point of the path
         }
         else
             return new Vector3(0f, -100f, 0f); //DummyVector to represent its not a good spot.
     }
 
+    public Vector3[] CalculatePathSections(Vector3 targetPosition)
+    {
+        if (Equals(nav, null))
+            init();
+        // Create a path and set it based on a target position.
+        NavMeshPath path = new NavMeshPath();
+
+        if (nav.enabled)
+            nav.CalculatePath(targetPosition, path);
+        if (nav.pathStatus == NavMeshPathStatus.PathComplete)
+        {
+            // Create an array of points which is the length of the number of corners in the path + 2.
+            Vector3[] allWayPoints = new Vector3[path.corners.Length + 2];
+            // The first point is the enemy's position.
+            allWayPoints[0] = unit.transform.position;
+            // The last point is the target position.
+            allWayPoints[allWayPoints.Length - 1] = targetPosition;
+            // The points inbetween are the corners of the path.
+            for (int i = 0; i < path.corners.Length; i++)
+            {
+                allWayPoints[i + 1] = path.corners[i];
+            }
+
+            // Create a float to store the path length that is by default 0.
+            float pathLength = 0;
+            bool pathTooLong = false;
+            // Increment the path length by an amount equal to the distance between each waypoint and the next.
+            for (int i = 0; i < allWayPoints.Length - 1 && !pathTooLong; i++)
+            {
+                pathLength += Vector3.Distance(allWayPoints[i], allWayPoints[i + 1]);
+
+                //If the path is too long, the too long part is cropped.
+
+                if (pathLength > speed)
+                {
+                    Debug.Log(pathLength);
+                    pathTooLong = true;
+                    Vector3[] newPath = new Vector3[i + 2];
+                    for (int j = 0; j < i + 1; j++)
+                        newPath[j] = allWayPoints[j];
 
 
+                    Vector3 dir = Vector3.Normalize(allWayPoints[i + 1] - allWayPoints[i]);
+                    float dist = (pathLength - speed);
 
+                    newPath[i + 1] = allWayPoints[i + 1] - (dist * dir);
+                    allWayPoints = newPath;
+                }
+            }
+            Vector3[] finalPath = new Vector3[allWayPoints.Length - 1];
+
+            for (int i = 0; i < finalPath.Length; i++)
+                finalPath[i] = allWayPoints[i + 1];
+
+            return finalPath; //Returns all points of the path minus the first point
+        }
+        else
+            return null; //DummyVector to represent its not a good spot.
+    }
 
     public void updatePos()
     {
         if (!moving && nav.hasPath && !nav.pathPending)
         {
-            UnitHandler.renderPath(nav.path.corners);
+            UnitMoveHandler.renderPath(nav.path.corners);
             nav.Resume();
             Debug.Log("Remaining dist: " + remDist);
             Debug.Log("Total Lenght: " + nav.remainingDistance);
@@ -297,6 +354,12 @@ public class Unit : Component, IEquatable<Unit>
                 hasMoved = true;
             else
                 hasActed = true;
+            //Check if unit has any actions left
+            if (UnitHandler.unit1.hasActed && UnitHandler.unit1.hasMoved)
+            {
+                Debug.Log("Unit no longer in bucket");
+                TurnHandler.removeFromBucket(UnitHandler.unit1, UnitHandler.unit1.team);
+            }
         }
     }
 

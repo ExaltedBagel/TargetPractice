@@ -14,7 +14,7 @@ public class UnitListUI : MonoBehaviour {
 	// Update is called once per frame
 	static public void updateText () {
         string badGuys = "Target List: \n";
-        foreach (Unit baddie in UnitHandler.targetList)
+        foreach (Unit baddie in UnitAttackHandler.targetList)
             badGuys += (baddie.uName + "\n");
         windowText.text = badGuys;
     }
