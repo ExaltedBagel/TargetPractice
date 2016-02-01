@@ -1,0 +1,252 @@
+﻿using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
+using System;
+
+
+public class Unit : Component, IEquatable<Unit>
+{
+    /*************************************/
+    //Basis
+    /************************************/
+    public Unit(GameObject unit, string name) { this.unit = unit; gameID = unit.GetInstanceID(); uName = name; }
+    private int gameID;
+    public GameObject unit;
+    private LayerMask world = (1 << 8);
+    public int team { get; set; }
+
+    /*************************************/
+    //Stats
+    /************************************/
+    public string uName { get; set; }
+    public int hp { get; set; }
+    public float speed { get; set; }
+    public int atk { get; set; }
+
+    /*************************************/
+    //Movement
+    /************************************/
+    public bool moving { get; set; }
+    public float remDist;
+    NavMeshAgent nav;
+    private Vector3 destination;
+    private Vector3 startPoint;
+    private float movSpeed = 12.0f;
+    private float movFrac = 0.0f;
+
+    /*************************************/
+    //Combat
+    /************************************/
+    private GameObject atkCircle;
+    private float atkRadius = 5.0f;
+
+    void Start()
+    {
+        
+        moving = false;
+        atk = 1;        
+    }
+
+    //A RETRAVAILLER********************************************************************************************************
+    public void init()
+    {
+        atkCircle = unit.transform.GetChild(0).gameObject;
+        nav = unit.GetComponentInChildren<NavMeshAgent>();
+        
+    }
+
+
+
+    /*************************************/
+    //Functions
+    /************************************/
+    public void printName()
+    {
+        Debug.Log(uName);
+    }
+
+    public int getId ()
+    {
+        return gameID;
+    }
+
+    /*************************************/
+    //Atk Function
+    /************************************/
+    public void toggleAtkCircle(bool state)
+    {
+        Debug.Log("Atk");
+        if (state)
+            atkCircle.SetActive(true);
+        else
+            atkCircle.SetActive(false);
+    }
+
+    public Collider[] overlapArea(LayerMask targetTeam)
+    {
+        Collider[] ennemies = Physics.OverlapSphere(atkCircle.transform.position, atkRadius, targetTeam);
+        foreach (Collider ennemy in ennemies)
+            Debug.Log(ennemy.gameObject.name);
+
+        return ennemies;
+    }
+
+    public bool tryRays(GameObject target)
+    {
+        bool result = false;
+        Vector3 baseVector = target.transform.position - unit.transform.position;
+        float angle = 0f;
+        //Sweep the target
+        for (; angle < 30 && !result; angle += 0.5f)
+        {
+            RaycastHit hit;
+            Ray ray = new Ray(unit.transform.position, Quaternion.AngleAxis(angle, Vector3.up) * baseVector);
+            Debug.DrawRay(unit.transform.position, Quaternion.AngleAxis(angle, Vector3.up) * baseVector, Color.green, 3.0f);
+
+            if (Physics.Raycast(ray, out hit))
+            {
+                if (hit.collider.gameObject.name == target.name)
+                    result = true;
+            }
+
+            ray = new Ray(unit.transform.position, Quaternion.AngleAxis(-angle, Vector3.up) * baseVector);
+            Debug.DrawRay(unit.transform.position, Quaternion.AngleAxis(-angle, Vector3.up) * baseVector, Color.red, 3.0f);
+
+            if (Physics.Raycast(ray, out hit))
+            {
+                if (hit.collider.gameObject.name == target.name)
+                    result = true;
+            }
+
+        }
+        return result;
+    }
+
+    public void attackUnit(Unit target)
+    {
+        target.hp -= this.atk;
+        Debug.Log(target.uName + " : " + target.hp + " hp left!");
+    }
+
+
+    /*************************************/
+    //Move Functions
+    /************************************/
+    public void moveUnit()
+    {
+        //Find position to move to
+        RaycastHit hit;
+        moving = true;
+        if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 100))
+        {
+            remDist = this.CalculatePathLength(hit.point) - speed;
+            nav.destination = hit.point;
+
+        }
+
+    }
+
+    public float CalculatePathLength(Vector3 targetPosition)
+    {
+        if (Equals(nav, null))
+            init();
+        // Create a path and set it based on a target position.
+        NavMeshPath path = new NavMeshPath();
+
+        if (nav.enabled)
+            nav.CalculatePath(targetPosition, path);
+        
+        // Create an array of points which is the length of the number of corners in the path + 2.
+        Vector3[] allWayPoints = new Vector3[path.corners.Length + 2];
+        // The first point is the enemy's position.
+        allWayPoints[0] = unit.transform.position;
+        // The last point is the target position.
+        allWayPoints[allWayPoints.Length - 1] = targetPosition;
+        // The points inbetween are the corners of the path.
+        for (int i = 0; i < path.corners.Length; i++)
+        {
+            allWayPoints[i + 1] = path.corners[i];
+        }
+        
+        // Create a float to store the path length that is by default 0.
+        float pathLength = 0;
+        bool pathTooLong = false;
+        // Increment the path length by an amount equal to the distance between each waypoint and the next.
+        for (int i = 0; i < allWayPoints.Length - 1 && !pathTooLong; i++)
+        {
+            pathLength += Vector3.Distance(allWayPoints[i], allWayPoints[i + 1]);
+
+            //If the path is too long, the too long part is cropped.
+            /*THIS PART DOES NOT WORK YET
+            if (pathLength > speed)
+            {
+                Debug.Log(pathLength);
+                pathTooLong = true;
+                Vector3[] newPath = new Vector3[i+2];
+                for (int j = 0; j < i+1; j++)
+                    newPath[j] = allWayPoints[j];
+                allWayPoints = newPath;
+
+                float ratio = (pathLength - speed) / Vector3.Distance(allWayPoints[i], allWayPoints[i + 1]);
+
+                allWayPoints[i + 1] = allWayPoints[i + 1] * ratio; 
+
+            }
+            */
+
+        }
+        //
+        UnitHandler.renderPath(allWayPoints);
+
+        return pathLength;
+    }
+
+
+    public void updatePos()
+    {
+        if (!moving && nav.hasPath && !nav.pathPending)
+        {
+            UnitHandler.renderPath(nav.path.corners);
+            nav.Resume();
+            Debug.Log("Remaining dist: " + remDist);
+            Debug.Log("Total Lenght: " + nav.remainingDistance);
+            moving = true;
+        }
+
+        if (((nav.remainingDistance < remDist) || (nav.remainingDistance <= 0.1)) && nav.hasPath && moving)
+        {
+            UnitHandler.erasePath();
+            nav.Stop();
+            nav.ResetPath();
+            moving = false;
+        }
+    }
+
+
+    /*************************************/
+    //Redefined Equalities
+    /************************************/
+
+    public bool Equals(Unit other)
+    {
+        if (Equals(this, null) && Equals(other, null))
+            return true;
+        else if (Equals(this, null) | Equals(this, null))
+            return false;
+        else if (gameID == other.gameID)
+            return true;
+        else
+            return false;
+    }
+    public override bool Equals(object obj)
+    {
+        return Equals(obj as Unit);
+    }
+    public override int GetHashCode()
+    {
+        return gameID; ;
+    }
+
+
+
+}
