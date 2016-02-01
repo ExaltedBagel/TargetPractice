@@ -46,6 +46,7 @@ public class UnitHandler : MonoBehaviour
             {
                 unit1 = units.Find(x => x.getId() == hit.collider.gameObject.GetInstanceID());
                 unit1.printName();
+                renderPathableArea(unit1);
 
             }
             else if (!EventSystem.current.IsPointerOverGameObject())
@@ -72,6 +73,7 @@ public class UnitHandler : MonoBehaviour
                 atkReady = false;
                 moveReady = false;
                 unit1.moveUnit();
+                DebugHUDHandler.showTeam1();
             }
 
             if(atkReady)
@@ -89,6 +91,7 @@ public class UnitHandler : MonoBehaviour
                         moveReady = false;
                         unit1.attackUnit(unit2);
                         unit1.toggleAtkCircle(false);
+                        DebugHUDHandler.showTeam1();
                     }
                 }
             }
@@ -98,18 +101,13 @@ public class UnitHandler : MonoBehaviour
         /*********************************************/
         /*MOVING INDICATOR --- Ca fuck ton curseur si le move est illégal. Reste a trouver un model de pointeurs legal XD*/
         /*********************************************/
-        if(moveReady)
+        if(moveReady && !(unit1.hasActed && unit1.hasMoved))
         {
             RaycastHit hit;
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 100))
             {
-                if (0 < unit1.CalculatePathLength(hit.point) - unit1.speed)
-                    CursorHandler.cursorNo();
-                else
-                    CursorHandler.cursorStd();
-
-
+                unit1.CalculatePathLength(hit.point);
             }
         }
 
@@ -135,8 +133,13 @@ public class UnitHandler : MonoBehaviour
     {
         if(!(Equals(unit1, null)))
         {
-            Debug.Log("MoveReady");
-            moveReady = true;
+            if (!(unit1.hasActed && unit1.hasMoved))
+            {
+                Debug.Log("MoveReady");
+                moveReady = true;
+            }
+            else
+                Debug.Log("Unit has no more actions left");
         }
            
     }
@@ -145,8 +148,13 @@ public class UnitHandler : MonoBehaviour
     {
         if (!(Equals(unit1, null)))
         {
-            Debug.Log("AttackReady");
-            atkReady = true;
+            if (!unit1.hasActed )
+            {
+                Debug.Log("AttackReady");
+                atkReady = true;
+            }
+            else
+                Debug.Log("Unit has no more attacks left");
         }
 
     }
@@ -158,13 +166,18 @@ public class UnitHandler : MonoBehaviour
 
     public void toggleAtk()
     {
-        unit1.init();
-        unit1.toggleAtkCircle(true);
-        listTargets();
-        if (targetList.Count != 0)
-            atkReady = true;
+        if (!unit1.hasActed)
+        {
+            unit1.init();
+            unit1.toggleAtkCircle(true);
+            listTargets();
+            if (targetList.Count != 0)
+                atkReady = true;
+            else
+                unit1.toggleAtkCircle(false);
+        }
         else
-            unit1.toggleAtkCircle(false);
+            Debug.Log("Unit has already acted");
     }
 
 
@@ -200,8 +213,10 @@ public class UnitHandler : MonoBehaviour
 
         foreach(Unit x in units)
         {
-            if(x.team == 1)
+            if (x.team == 1)
                 listTeam1.Add(x);
+            else
+                listTeam2.Add(x);
         }
         
         DebugHUDHandler.showTeam1();
@@ -220,6 +235,59 @@ public class UnitHandler : MonoBehaviour
             unitPathRender.SetPosition(i, points[i] + new Vector3(0, 0.5f, 0));
         }
     }
+
+
+    public static void renderPathableArea(Unit unit1)
+    {
+        List<Vector3> pathPoints = new List<Vector3>();
+        
+        
+        for (int angle = 0; angle < 360; angle += 5)
+        {
+            bool pointFound = false;
+            float effectiveSpeed = unit1.speed;
+            while (!pointFound)
+            {
+                Vector3 origin = (unit1.unit.transform.position + ((Quaternion.AngleAxis(angle, Vector3.up) * Vector3.forward * effectiveSpeed) + Vector3.up * 10));
+                Ray checker = new Ray(origin, Vector3.down);
+                RaycastHit hit;
+                int worldLayer = 1 << 8;
+                if (Physics.Raycast(checker, out hit, Mathf.Infinity, worldLayer))
+                {
+                    Vector3 dest = unit1.CalculatePathEndPoint(hit.point);
+                    if (dest != new Vector3(0, -100f, 0))
+                    {
+                        pathPoints.Add(unit1.CalculatePathEndPoint(hit.point));
+                        Debug.DrawLine(unit1.unit.transform.position, dest, Color.red, 10f);
+                        pointFound = true;
+                    }
+                    //If point is not found or innaccessible, try closer
+                    else if (effectiveSpeed > 0.1f)
+                    {
+                        effectiveSpeed -= unit1.speed * 0.1f;
+                    }
+                    else
+                    {
+                        Debug.Log("point not accessible");
+                        pointFound = true;
+                    }
+                }
+                //Point may be off the map also
+                else if (effectiveSpeed > 0.1f)
+                {
+                    effectiveSpeed -= unit1.speed * 0.1f;
+                }
+                else
+                {
+                    Debug.Log("point not accessible");
+                    pointFound = true;
+                }
+            }
+        }
+
+    }
+
+
 
     public static void erasePath()
     {

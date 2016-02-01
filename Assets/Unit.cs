@@ -14,6 +14,8 @@ public class Unit : Component, IEquatable<Unit>
     public GameObject unit;
     private LayerMask world = (1 << 8);
     public int team { get; set; }
+    public bool hasMoved = false;
+    public bool hasActed = false;
 
     /*************************************/
     //Stats
@@ -22,6 +24,7 @@ public class Unit : Component, IEquatable<Unit>
     public int hp { get; set; }
     public float speed { get; set; }
     public int atk { get; set; }
+    public int actionPoints { get; set; }
 
     /*************************************/
     //Movement
@@ -124,8 +127,11 @@ public class Unit : Component, IEquatable<Unit>
 
     public void attackUnit(Unit target)
     {
+        
         target.hp -= this.atk;
         Debug.Log(target.uName + " : " + target.hp + " hp left!");
+        hasActed = true;
+        
     }
 
 
@@ -134,14 +140,21 @@ public class Unit : Component, IEquatable<Unit>
     /************************************/
     public void moveUnit()
     {
-        //Find position to move to
-        RaycastHit hit;
-        moving = true;
-        if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 100))
-        {
-            remDist = this.CalculatePathLength(hit.point) - speed;
-            nav.destination = hit.point;
+        if((!hasActed || !hasMoved))
+        { 
+            //Find position to move to
+            RaycastHit hit;
+            moving = true;
+            if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 100))
+            {
+                remDist = this.CalculatePathLength(hit.point) - speed;
+                nav.destination = hit.point;
 
+            }
+        }
+        else
+        {
+            Debug.Log("Unit is out of actions");
         }
 
     }
@@ -177,7 +190,7 @@ public class Unit : Component, IEquatable<Unit>
             pathLength += Vector3.Distance(allWayPoints[i], allWayPoints[i + 1]);
 
             //If the path is too long, the too long part is cropped.
-            /*THIS PART DOES NOT WORK YET
+
             if (pathLength > speed)
             {
                 Debug.Log(pathLength);
@@ -185,21 +198,82 @@ public class Unit : Component, IEquatable<Unit>
                 Vector3[] newPath = new Vector3[i+2];
                 for (int j = 0; j < i+1; j++)
                     newPath[j] = allWayPoints[j];
+
+
+                Vector3 dir = Vector3.Normalize(allWayPoints[i + 1] - allWayPoints[i]);
+                float dist = (pathLength - speed);
+                
+                newPath[i + 1] = allWayPoints[i + 1] - (dist* dir);
                 allWayPoints = newPath;
-
-                float ratio = (pathLength - speed) / Vector3.Distance(allWayPoints[i], allWayPoints[i + 1]);
-
-                allWayPoints[i + 1] = allWayPoints[i + 1] * ratio; 
-
-            }
-            */
-
+            }           
         }
         //
         UnitHandler.renderPath(allWayPoints);
 
         return pathLength;
     }
+
+    /**************************************************/
+    /*Might need to check if its pathable */
+    /**************************************************/
+    public Vector3 CalculatePathEndPoint(Vector3 targetPosition)
+    {
+        if (Equals(nav, null))
+            init();
+        // Create a path and set it based on a target position.
+        NavMeshPath path = new NavMeshPath();
+
+        if (nav.enabled)
+            nav.CalculatePath(targetPosition, path);
+        if (nav.pathStatus == NavMeshPathStatus.PathComplete)
+        {
+            // Create an array of points which is the length of the number of corners in the path + 2.
+            Vector3[] allWayPoints = new Vector3[path.corners.Length + 2];
+            // The first point is the enemy's position.
+            allWayPoints[0] = unit.transform.position;
+            // The last point is the target position.
+            allWayPoints[allWayPoints.Length - 1] = targetPosition;
+            // The points inbetween are the corners of the path.
+            for (int i = 0; i < path.corners.Length; i++)
+            {
+                allWayPoints[i + 1] = path.corners[i];
+            }
+
+            // Create a float to store the path length that is by default 0.
+            float pathLength = 0;
+            bool pathTooLong = false;
+            // Increment the path length by an amount equal to the distance between each waypoint and the next.
+            for (int i = 0; i < allWayPoints.Length - 1 && !pathTooLong; i++)
+            {
+                pathLength += Vector3.Distance(allWayPoints[i], allWayPoints[i + 1]);
+
+                //If the path is too long, the too long part is cropped.
+
+                if (pathLength > speed)
+                {
+                    Debug.Log(pathLength);
+                    pathTooLong = true;
+                    Vector3[] newPath = new Vector3[i + 2];
+                    for (int j = 0; j < i + 1; j++)
+                        newPath[j] = allWayPoints[j];
+
+
+                    Vector3 dir = Vector3.Normalize(allWayPoints[i + 1] - allWayPoints[i]);
+                    float dist = (pathLength - speed);
+
+                    newPath[i + 1] = allWayPoints[i + 1] - (dist * dir);
+                    allWayPoints = newPath;
+                }
+            }
+
+            return allWayPoints[allWayPoints.Length - 1]; //returns the endpoint
+        }
+        else
+            return new Vector3(0f, -100f, 0f); //DummyVector to represent its not a good spot.
+    }
+
+
+
 
 
     public void updatePos()
@@ -219,6 +293,10 @@ public class Unit : Component, IEquatable<Unit>
             nav.Stop();
             nav.ResetPath();
             moving = false;
+            if (!hasMoved)
+                hasMoved = true;
+            else
+                hasActed = true;
         }
     }
 
