@@ -84,6 +84,7 @@
     <Compile Include="Assets\UnitMoveHandler.cs" />
     <Compile Include="Assets\UnitWindow.cs" />
     <Compile Include="Assets\Units\Orc.cs" />
+    <Compile Include="Assets\Units\Warrior.cs" />
     <Compile Include="Assets\Units\playerSpawn.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\SyntaxTree\UnityVS\2015\UnityVS.CSharp.targets" />

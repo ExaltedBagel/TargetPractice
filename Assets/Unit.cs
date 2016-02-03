@@ -94,8 +94,9 @@ public class Unit : Component, IEquatable<Unit>
         return ennemies;
     }
 
-    public bool tryRays(GameObject target)
+    public bool tryRays(GameObject target, LayerMask team)
     {
+        Debug.Log("TryEnter");
         bool result = false;
         Vector3 baseVector = target.transform.position - unit.transform.position;
         float angle = 0f;
@@ -106,22 +107,23 @@ public class Unit : Component, IEquatable<Unit>
             Ray ray = new Ray(unit.transform.position, Quaternion.AngleAxis(angle, Vector3.up) * baseVector);
             Debug.DrawRay(unit.transform.position, Quaternion.AngleAxis(angle, Vector3.up) * baseVector, Color.green, 3.0f);
 
-            if (Physics.Raycast(ray, out hit))
+            if (Physics.Raycast(ray, out hit, team))
             {
-                if (hit.collider.gameObject.name == target.name)
+                if (hit.collider.transform.root.gameObject.GetInstanceID() == target.transform.root.gameObject.GetInstanceID())
                     result = true;
             }
 
             ray = new Ray(unit.transform.position, Quaternion.AngleAxis(-angle, Vector3.up) * baseVector);
             Debug.DrawRay(unit.transform.position, Quaternion.AngleAxis(-angle, Vector3.up) * baseVector, Color.red, 3.0f);
 
-            if (Physics.Raycast(ray, out hit))
+            if (Physics.Raycast(ray, out hit, team))
             {
                 if (hit.collider.gameObject.name == target.name)
                     result = true;
             }
 
         }
+        Debug.Log("TryExit");
         return result;
     }
 
@@ -131,6 +133,15 @@ public class Unit : Component, IEquatable<Unit>
         target.hp -= this.atk;
         Debug.Log(target.uName + " : " + target.hp + " hp left!");
         hasActed = true;
+        if(target.hp <= 0)
+        {
+            TurnHandler.removeFromBucket(target, target.team);
+            UnitHandler.removeFromUnitList(target);
+            Debug.Log("Target: " + target.uName + " has been slain!");
+            Destroy(target.unit);
+            UnitHandler.hovered = null;
+            target = null;
+        }
         
     }
 
@@ -350,6 +361,7 @@ public class Unit : Component, IEquatable<Unit>
             nav.Stop();
             nav.ResetPath();
             moving = false;
+            UnitHandler.canSelect = true;
             if (!hasMoved)
                 hasMoved = true;
             else
@@ -372,7 +384,7 @@ public class Unit : Component, IEquatable<Unit>
     {
         if (Equals(this, null) && Equals(other, null))
             return true;
-        else if (Equals(this, null) | Equals(this, null))
+        else if (Equals(this, null) | Equals(other, null))
             return false;
         else if (gameID == other.gameID)
             return true;

@@ -12,6 +12,11 @@ public class DebugHUDHandler : MonoBehaviour {
         windowText = GetComponent<Text>();
     }
 
+    public void bucketUp()
+    {
+        showBucket1();
+    }
+
     // Update is called once per frame
     static public void updateText()
     {
@@ -52,6 +57,18 @@ public class DebugHUDHandler : MonoBehaviour {
 
         }
         windowText.text = team2;
+    }
+
+    static public void showBucket1()
+    {
+        string buck1 = "Buck1 List: \n";
+        foreach (Unit unit in TurnHandler.Team1Bucket)
+        {
+            buck1 += (unit.uName);
+            buck1 += "\n";
+        }
+
+    windowText.text = buck1;
     }
 }
 

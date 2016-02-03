@@ -23,6 +23,7 @@ public class UnitMoveHandler : MonoBehaviour {
             if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 100))
             {
                 UnitHandler.unit1.CalculatePathLength(hit.point);
+                
             }
 
         }
@@ -42,6 +43,7 @@ public class UnitMoveHandler : MonoBehaviour {
             {
                 UnitAttackHandler.atkReady = false;
                 moveReady = false;
+                UnitHandler.canSelect = false;
                 UnitHandler.unit1.moveUnit();
                 DebugHUDHandler.showTeam1();
             }
@@ -50,7 +52,7 @@ public class UnitMoveHandler : MonoBehaviour {
 
     public void moveUnit()
     {
-        if (!(Equals(UnitHandler.unit1, null)))
+        if (!(Equals(UnitHandler.unit1, null)) && !moveReady && UnitHandler.canSelect)
         {
             if (!(UnitHandler.unit1.hasActed && UnitHandler.unit1.hasMoved))
             {

@@ -6,6 +6,7 @@ public class UnitAttackHandler : MonoBehaviour {
 
     public static bool atkReady;
     public static List<Unit> targetList = new List<Unit>();
+    LayerMask targettedTeam;
 
     // Use this for initialization
     void Start () {
@@ -24,7 +25,7 @@ public class UnitAttackHandler : MonoBehaviour {
             {
                 RaycastHit hit;
 
-                if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, Mathf.Infinity, UnitHandler.team2))
+                if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, Mathf.Infinity, targettedTeam))
                 {
                     UnitHandler.unit2 = UnitHandler.units.Find(x => x.getId() == hit.collider.gameObject.GetInstanceID());
                     UnitHandler.unit2.printName();
@@ -57,7 +58,7 @@ public class UnitAttackHandler : MonoBehaviour {
     {
         if (!UnitHandler.unit1.hasActed)
         {
-            UnitHandler.unit1.init(); //THIS SHOULD BE REMOVED WHEN INIT IS BETTER HANDLED
+            //UnitHandler.unit1.init(); //THIS SHOULD BE REMOVED WHEN INIT IS BETTER HANDLED
             UnitHandler.unit1.toggleAtkCircle(true);
             listTargets();
             if (targetList.Count != 0)
@@ -75,19 +76,39 @@ public class UnitAttackHandler : MonoBehaviour {
     public void listTargets()
     {
         targetList.Clear();
-        Collider[] targets = UnitHandler.unit1.overlapArea(UnitHandler.team2);
+        Collider[] targets;
+        
+        if (UnitHandler.unit1.team == 1)
+        {
+            targets = UnitHandler.unit1.overlapArea(UnitHandler.team2);
+            targettedTeam = UnitHandler.team2;
+        }
+        else
+        {
+            targets = UnitHandler.unit1.overlapArea(UnitHandler.team1);
+            targettedTeam = UnitHandler.team1;
+        }
+        
 
         foreach (Collider target in targets)
         {
+            Debug.Log("Colliders found x " + target.gameObject.name + " " + target.gameObject.GetInstanceID());
             //Add targets to the target list
             Unit newTarget = UnitHandler.units.Find(x => x.getId() == target.gameObject.GetInstanceID());
 
             //Only add new targets to the list
             if (!targetList.Contains(newTarget))
+            {
                 targetList.Add(newTarget);
-        }
+                Debug.Log("Target added");
+            }
 
-        targetList.RemoveAll(x => !x.tryRays(UnitHandler.unit1.unit));
+            
+        }
+        Debug.Log("List size: " + targetList.Count);
+        //TRY RAYS REMOVES EVERYTHING ATM
+        targetList.RemoveAll(x => !x.tryRays(UnitHandler.unit1.unit, targettedTeam));
+        Debug.Log("List size: " + targetList.Count);
         UnitListUI.updateText();
         Debug.Log(targetList.Count);
 

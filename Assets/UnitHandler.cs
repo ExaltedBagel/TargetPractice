@@ -21,9 +21,20 @@ public class UnitHandler : MonoBehaviour
     //Selection Things
     public Material mouseOver;
     public Material selected;
-    GameObject lastSelected;
+    
+    public static GameObject hovered;
+    public static GameObject lastSelected;
+
+    static public bool canSelect = true;
 
     static public LineRenderer unitPathRender;
+
+    /*********************************************************/
+    /*DEBUG PART*/
+    /*********************************************************/
+    bool initiated = false;
+
+
 
     void Awake()
     {
@@ -32,7 +43,7 @@ public class UnitHandler : MonoBehaviour
         unitPathRender = GetComponentInChildren<LineRenderer>();       
         team1 = (1 << 10);
         team2 = (1 << 11);
-        unitsLayer = team1 | team2;       
+        unitsLayer = (team1 | team2);       
     }
 	
 	// Update is called once per frame
@@ -40,11 +51,11 @@ public class UnitHandler : MonoBehaviour
 
         updateSelectionCircle();
         //Selection
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && canSelect)
         {
             RaycastHit hit;
 
-            if (!EventSystem.current.IsPointerOverGameObject() && Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, Mathf.Infinity, team1))
+            if (!EventSystem.current.IsPointerOverGameObject() && Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, Mathf.Infinity, unitsLayer))
             {
                 GameObject objDetected = hit.collider.gameObject;
                 //If you click the circle, you get the actual unit tied to the circle.
@@ -53,6 +64,13 @@ public class UnitHandler : MonoBehaviour
 
                 unit1 = units.Find(x => x.getId() == objDetected.GetInstanceID());
                 unit1.printName();
+
+                if (!Equals(lastSelected, null))
+                    lastSelected.SetActive(false);
+
+                lastSelected = hovered;
+
+                updateSelectionCircle();
                 //updatePolygon();
                 //updateLine();
                 //updateContourPoints();
@@ -60,7 +78,10 @@ public class UnitHandler : MonoBehaviour
             }
             else if (!EventSystem.current.IsPointerOverGameObject() && !Equals(unit1, null) && !unit1.moving)
             {
+                unit1.toggleAtkCircle(false);
                 unit1 = null;
+                lastSelected.SetActive(false);
+                lastSelected = null;
                 Debug.Log("Unselected");
             }
             else
@@ -81,6 +102,7 @@ public class UnitHandler : MonoBehaviour
     public static void addToUnitList(Unit newUnit)
     {
         units.Add(newUnit);
+        newUnit.init();
         DebugHUDHandler.updateText();
     }
 
@@ -125,30 +147,32 @@ public class UnitHandler : MonoBehaviour
         {
             if (hit.collider.tag == "Unit" && hit.collider.gameObject != unit1)
             {
-                GameObject hovered = units.Find(x => x.getId() == hit.collider.gameObject.GetInstanceID()).unit;
+                hovered = units.Find(x => x.getId() == hit.collider.gameObject.GetInstanceID()).unit;
                 if (!Equals(hovered, null))
                 {
                     GameObject circle = hovered.transform.GetChild(2).gameObject;
                     Renderer render = circle.GetComponent<Renderer>();
                     render.material = mouseOver;
                     circle.SetActive(true);
-                    lastSelected = circle;
+                    if(!Equals(hovered, lastSelected))
+                        hovered = circle;
                 }
             }
-            else if (!Equals(unit1, null) && !Equals(lastSelected.GetComponent<Renderer>().material, selected))
+            else if (!Equals(unit1, null) && !Equals(lastSelected, null) && !Equals(lastSelected.GetComponent<Renderer>().material, selected))
             {
                 Renderer render = lastSelected.GetComponent<Renderer>();
                 render.material = selected;
             }
 
-
         }
-        else if(Equals(unit1, null))
+        else if(!Equals(hovered, null) && !Equals(hovered, lastSelected))
         {
-            if(!Equals(lastSelected, null))
-                lastSelected.SetActive(false);
+            hovered.SetActive(false);
+            hovered = null;
         }
     }
+
+
     /********************************************/
     /*SELECTION CIRCLE UPDATE*/
     /*******************************************/
@@ -407,7 +431,6 @@ public class UnitHandler : MonoBehaviour
             line.SetPosition(i, pathPoints[i]);
         }
     }
-
 
     public static void erasePath()
     {

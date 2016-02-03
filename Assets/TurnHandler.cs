@@ -10,7 +10,7 @@ public class TurnHandler : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-	
+        
 	}
 	
 	// Update is called once per frame
@@ -18,7 +18,7 @@ public class TurnHandler : MonoBehaviour {
 	
 	}
 
-    public void fillBuckets()
+    public static void fillBuckets()
     {
         for (int i = 0; i < UnitHandler.listTeam1.Count; i++)
             Team1Bucket.Add(UnitHandler.listTeam1[i]);
@@ -37,8 +37,17 @@ public class TurnHandler : MonoBehaviour {
     public static void removeFromBucket(Unit unitRemoved, int team)
     {
         if (team == 1)
+        {
             Team1Bucket.Remove(unitRemoved);
+            if (Team1Bucket.Count == 0)
+                Debug.Log("No more units in 1");
+        }
         else
+        {
             Team2Bucket.Remove(unitRemoved);
+            if (Team2Bucket.Count == 0)
+                Debug.Log("No more units in 2");
+        }
+           
     }
 }
