@@ -1,0 +1,58 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9bf21e7173c686b4084f7e1efe54ecca, type: 3}
+  m_Name: AttackList
+  m_EditorClassIdentifier: 
+  attackPList:
+  - uniqueID: 7680f693-bd14-4082-b41d-15442b9ef893
+    aName: Chop
+    pattern: 0
+    dmgTypes: 
+    range: 5
+    radius: 5
+    roll: 80
+    dmg: 2
+    nDice: 3
+    expectedMin: 2
+    expectedMax: 6
+  - uniqueID: 6e1f1649-5c81-4cb3-8bbb-f4866076a514
+    aName: Fireball
+    pattern: 1
+    dmgTypes: 
+    range: 20
+    radius: 11.1300001
+    roll: 60
+    dmg: 3
+    nDice: 4
+    expectedMin: 3
+    expectedMax: 12
+  - uniqueID: 3dbc9213-b7cb-4c0d-97ab-1926ad3e9faf
+    aName: Grenade
+    pattern: 1
+    dmgTypes: 
+    range: 19.8999996
+    radius: 5
+    roll: 30
+    dmg: 3
+    nDice: 5
+    expectedMin: 0
+    expectedMax: 9
+  - uniqueID: a26456e1-5d76-4288-ae8c-0171c65377c9
+    aName: Throw Knife
+    pattern: 0
+    dmgTypes: 
+    range: 14
+    radius: 5
+    roll: 50
+    dmg: 1
+    nDice: 5
+    expectedMin: 1
+    expectedMax: 4

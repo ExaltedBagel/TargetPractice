@@ -7,44 +7,50 @@ public class TargetCircle : MonoBehaviour {
     public Camera mainCam;
     public Material safe;
     public Material target;
+    
+    private static List<UnitBase> targets = new List<UnitBase>();
 
-    private List<GameObject> targets = new List<GameObject>();
+    public static List<UnitBase> getTargets()
+    {
+        return targets;
+    }
 
-    // Use this for initialization
-    void Start () {
-	
-	}
-	
-	// Update is called once per frame
-	void Update () {
+    public void toggleTargetBlastCircle(AttackBlastCircle attack)
+    {
+        gameObject.transform.localScale = new Vector3(attack.radius, 0.2f, attack.radius);
+        gameObject.SetActive(true);
+    }
 
+    public void sleepBlastCircle()
+    {
+        targets = new List<UnitBase>();
+        gameObject.SetActive(false);
+    }
+
+    private UnitBase findTarget(GameObject target)
+    {
+        foreach (UnitBase unit in UnitHandler.units)
+        {
+            if (unit.unit.GetHashCode() == target.GetHashCode())
+                return unit;
+        }
+        return null;
+    }      
+
+// Update is called once per frame
+void Update () {
+        //UnitHandler.currentEnnemyLayer = UnitHandler.team2;
+        
+        /*
         //Position on plane
         RaycastHit hit;
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-
-        if (Physics.Raycast(ray, out hit))
+        //Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        
+        if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, Mathf.Infinity, UnitHandler.worldLayer))
         {
-            if(hit.collider.tag == "Plane")
-                this.transform.position = hit.point;
+            gameObject.transform.position = hit.point + new Vector3(0f, 0.2f, 0f);
         }
-
+        */
     }
 
-
-    void OnTriggerEnter(Collider col)
-    {
-        Debug.Log("Entered");
-        col.GetComponent<Renderer>().material = target;
-        targets.Add(col.gameObject);
-        Debug.Log(targets.Count + " in the list.");
-
-    }
-
-    void OnTriggerExit(Collider col)
-    {
-        Debug.Log("Left");
-        col.GetComponent<Renderer>().material = safe;
-        targets.Remove(col.gameObject);
-        Debug.Log(targets.Count + " in the list.");
-    }
 }

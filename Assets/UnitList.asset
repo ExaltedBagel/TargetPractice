@@ -1,0 +1,288 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c620658b040a53b4e8614d856938f3bd, type: 3}
+  m_Name: UnitList
+  m_EditorClassIdentifier: 
+  unitPList:
+  - model: {fileID: 0}
+    uniqueID: c260f4b4-7759-456f-bd08-034f4ef97f93
+    uName: DatLinkedUnit
+    uType: 0
+    isHero: 0
+    maxHp: 4
+    maxSpeed: 10.1000004
+    impulse: 3
+    memory: 4
+    typeAtk:
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    typeDef:
+    - 1.005
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    attacksDataID:
+    - 7680f693-bd14-4082-b41d-15442b9ef893
+    - a26456e1-5d76-4288-ae8c-0171c65377c9
+  - model: {fileID: 0}
+    uniqueID: 020f1dfe-f946-417f-9e0b-6403c0533703
+    uName: Garfunkel
+    uType: 0
+    isHero: 0
+    maxHp: 5
+    maxSpeed: 5
+    impulse: 3
+    memory: 0
+    typeAtk:
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    typeDef:
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    attacksDataID:
+    - 7680f693-bd14-4082-b41d-15442b9ef893
+  - model: {fileID: 0}
+    uniqueID: 16adb3ce-f9dd-4a1d-bbbd-940727b8c0d6
+    uName: Le fugitif de Brossard
+    uType: 0
+    isHero: 0
+    maxHp: 0
+    maxSpeed: 5
+    impulse: 0
+    memory: 0
+    typeAtk:
+    - .5
+    - .5
+    - .5
+    - .5
+    - .5
+    - .5
+    - .5
+    - .5
+    - .5
+    - .5
+    - .5
+    - .5
+    - .5
+    typeDef:
+    - .5
+    - .5
+    - .5
+    - .5
+    - .5
+    - .5
+    - .5
+    - .5
+    - .5
+    - .5
+    - .5
+    - .5
+    - .5
+    attacksDataID: []
+  - model: {fileID: 0}
+    uniqueID: 4160c7aa-56a4-4c1c-bdc8-fb539f72d3c4
+    uName: L'ours du Revenant
+    uType: 1
+    isHero: 1
+    maxHp: 12
+    maxSpeed: 12
+    impulse: 5
+    memory: 0
+    typeAtk:
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    typeDef:
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    attacksDataID:
+    - 7680f693-bd14-4082-b41d-15442b9ef893
+    - 3dbc9213-b7cb-4c0d-97ab-1926ad3e9faf
+  - model: {fileID: 0}
+    uniqueID: 9da0e557-a1c4-4989-8c5a-668cc5b73f20
+    uName: David Vo
+    uType: 0
+    isHero: 1
+    maxHp: 0
+    maxSpeed: 5
+    impulse: 3
+    memory: 0
+    typeAtk:
+    - .5
+    - .5
+    - .5
+    - .5
+    - .5
+    - .5
+    - .5
+    - .5
+    - .5
+    - .5
+    - .5
+    - .5
+    - .5
+    typeDef:
+    - .5
+    - .5
+    - .5
+    - .5
+    - .5
+    - .5
+    - .5
+    - .5
+    - .5
+    - .5
+    - .5
+    - .5
+    - .5
+    attacksDataID: []
+  - model: {fileID: 0}
+    uniqueID: f4175e72-896b-4a62-a29b-792ce3932036
+    uName: Spencer
+    uType: 5
+    isHero: 0
+    maxHp: 12
+    maxSpeed: 11.8000002
+    impulse: 0
+    memory: 0
+    typeAtk:
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    typeDef:
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    - 1
+    attacksDataID:
+    - 7680f693-bd14-4082-b41d-15442b9ef893
+    - a26456e1-5d76-4288-ae8c-0171c65377c9
+    - 3dbc9213-b7cb-4c0d-97ab-1926ad3e9faf
+  - model: {fileID: 0}
+    uniqueID: 9d5febd9-ab82-4cff-b302-df7595808892
+    uName: Zarflax
+    uType: 0
+    isHero: 0
+    maxHp: 0
+    maxSpeed: 5
+    impulse: 0
+    memory: 0
+    typeAtk:
+    - .5
+    - .5
+    - .5
+    - .5
+    - .5
+    - .5
+    - .5
+    - .5
+    - .5
+    - .5
+    - .5
+    - .5
+    - .5
+    typeDef:
+    - .5
+    - .5
+    - .5
+    - .5
+    - .5
+    - .5
+    - .5
+    - .5
+    - .5
+    - .5
+    - .5
+    - .5
+    - .5
+    attacksDataID: []

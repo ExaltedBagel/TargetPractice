@@ -1,0 +1,158 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fba7f3bf6dadecf48bd49e7b88dd6492, type: 3}
+  m_Name: CardList
+  m_EditorClassIdentifier: 
+  cardPList:
+  - uniqueID: 58d339ac-1fcd-408d-a96c-26dfa30fcfaf
+    linkedTo: 4160c7aa-56a4-4c1c-bdc8-fb539f72d3c4
+    cardType: 0
+    cardName: BearHero
+    manaCost: 0000000000000000000000000000000000000000
+    school: 0
+    rechargeTime: 0
+    charges: 0
+    type: 0
+    eType: 0
+    durability: 0
+    manaYield: 0000000000000000000000000000000000000000
+  - uniqueID: f1867c63-bc11-4aee-b190-0369fc10914e
+    linkedTo: 
+    cardType: 2
+    cardName: EarthCrystal
+    manaCost: 0000000000000000000000000000000000000000
+    school: 4
+    rechargeTime: 0
+    charges: 0
+    type: 0
+    eType: 0
+    durability: 4
+    manaYield: 0000000000000000000000000000000001000000
+  - uniqueID: 016b9850-9ed6-4b69-95a1-51208de33acc
+    linkedTo: 
+    cardType: 3
+    cardName: Equipment
+    manaCost: 0000000000000000000000000000000000000000
+    school: 0
+    rechargeTime: 0
+    charges: 0
+    type: 0
+    eType: 0
+    durability: 0
+    manaYield: 0000000000000000000000000000000000000000
+  - uniqueID: 0d721318-c89d-4ef4-93ea-380752e09ad0
+    linkedTo: 6e1f1649-5c81-4cb3-8bbb-f4866076a514
+    cardType: 1
+    cardName: Fireball
+    manaCost: 0000000002000000000000000000000000000000
+    school: 1
+    rechargeTime: 0
+    charges: 0
+    type: 0
+    eType: 0
+    durability: 0
+    manaYield: 0000000000000000000000000000000000000000
+  - uniqueID: a2b7ddd1-dfee-4d99-8fac-7f1d2df85687
+    linkedTo: 
+    cardType: 2
+    cardName: FireCrystal
+    manaCost: 0000000000000000000000000000000000000000
+    school: 1
+    rechargeTime: 0
+    charges: 0
+    type: 0
+    eType: 0
+    durability: 4
+    manaYield: 0000000001000000000000000000000000000000
+  - uniqueID: 60982248-5507-47a3-a139-7b46c95296ae
+    linkedTo: f4175e72-896b-4a62-a29b-792ce3932036
+    cardType: 0
+    cardName: Garfunkel
+    manaCost: 0100000001000000000000000100000000000000
+    school: 8
+    rechargeTime: 3
+    charges: 0
+    type: 0
+    eType: 0
+    durability: 0
+    manaYield: 0000000000000000000000000000000000000000
+  - uniqueID: e9d84e70-aab4-43e1-a49e-00490ac05cea
+    linkedTo: c260f4b4-7759-456f-bd08-034f4ef97f93
+    cardType: 0
+    cardName: LinkedUnit
+    manaCost: 0000000000000000000000000000000000000000
+    school: 0
+    rechargeTime: 0
+    charges: 0
+    type: 0
+    eType: 0
+    durability: 0
+    manaYield: 0000000000000000000000000000000000000000
+  - uniqueID: 88f9fcc8-c87e-48c0-afc0-1018bc0902b2
+    linkedTo: f4175e72-896b-4a62-a29b-792ce3932036
+    cardType: 0
+    cardName: Spencer
+    manaCost: 0000000000000000000000000000000000000000
+    school: 0
+    rechargeTime: 0
+    charges: 0
+    type: 0
+    eType: 0
+    durability: 0
+    manaYield: 0000000000000000000000000000000000000000
+  - uniqueID: 82c4835d-c161-465a-a527-6a0c549181b8
+    linkedTo: a26456e1-5d76-4288-ae8c-0171c65377c9
+    cardType: 1
+    cardName: ThrowKnife
+    manaCost: 0000000000000000000000000000000000000000
+    school: 0
+    rechargeTime: 0
+    charges: 0
+    type: 0
+    eType: 0
+    durability: 0
+    manaYield: 0000000000000000000000000000000000000000
+  - uniqueID: 9028f58f-7b38-4d59-8de3-60d68c254d96
+    linkedTo: 
+    cardType: 2
+    cardName: WaterCrystal
+    manaCost: 0000000000000000000000000000000000000000
+    school: 0
+    rechargeTime: 0
+    charges: 0
+    type: 0
+    eType: 0
+    durability: 4
+    manaYield: 0000000000000000010000000000000000000000
+  - uniqueID: ce550386-a4c7-4ab9-83f9-1b5c96c13377
+    linkedTo: 
+    cardType: 2
+    cardName: WindCrystal
+    manaCost: 0000000000000000000000000000000000000000
+    school: 3
+    rechargeTime: 0
+    charges: 0
+    type: 0
+    eType: 0
+    durability: 4
+    manaYield: 0000000000000000000000000100000000000000
+  - uniqueID: a9a02103-8421-4786-9a6c-dd7d2d1ba7c4
+    linkedTo: 6e1f1649-5c81-4cb3-8bbb-f4866076a514
+    cardType: 1
+    cardName: Spell2
+    manaCost: 0000000002000000000000000000000000000000
+    school: 1
+    rechargeTime: 0
+    charges: 0
+    type: 0
+    eType: 0
+    durability: 0
+    manaYield: 0000000000000000000000000000000000000000
